@@ -7,33 +7,53 @@ on:
 jobs:
   tests:
     runs-on: ubuntu-latest
-    
+
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      
+
       - name: Install dependencies
         run: |
           cd backend
           python -m pip install --upgrade pip
           pip install flake8 pytest
           pip install -r requirements.txt
-      
+
       - name: Lint with flake8
         run: |
           cd backend
           flake8 . --max-line-length=120
-      
+
       - name: Run tests
         run: |
           cd backend
           python manage.py test
-      
-      - name: Build Docker image
+
+      - name: Build backend image
         run: |
           docker build -t taski-backend ./backend
-          echo "✅ Docker image built successfully"
+          echo "✅ Backend image built"
+
+  build-nginx:
+    needs: tests
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Build nginx image
+        run: |
+          if [ -f "nginx/Dockerfile" ]; then
+            docker build -t taski-nginx ./nginx
+            echo "✅ Nginx image built"
+          else
+            echo "⚠️ nginx/Dockerfile not found"
+          fi
+      
+      - name: Show all built images
+        run: docker images
