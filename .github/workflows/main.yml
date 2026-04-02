@@ -95,7 +95,4 @@ jobs:
         with:
           to: ${{ secrets.TELEGRAM_TO }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
-          message: |
-            ✅ Образы успешно загружены!
-            ��� backend: ${{ secrets.DOCKER_USERNAME }}/taski_backend:latest
-            ��� nginx: ${{ secrets.DOCKER_USERNAME }}/taski_nginx:latest
+          message: "Images uploaded successfully! Backend and Nginx pushed to Docker Hub."
